@@ -36,9 +36,9 @@ def add():
             print("Invalid Age. Please Try Again.")
     #  Assigning variables to user's input
     # Adding users input to database
-    data = {"name":name, "age":age,}
+    data = {"name":name, "age":age}
     database.append(data)
-    print(f"Assigned {name}'s as {age} years old.")
+    print(f"Added {name}'s as {age} years old, in the database.")
     again()
 def remove():
     print("Working Progress")
@@ -60,6 +60,23 @@ def again():
             
     
 def show():
-    print(database)
+    print("- - - - Your Database - - - -")
+    counter = 0 
+    for data in database: # Loops until it's went through all the rows of data.
+        counter += 1 #Adds one to counter everytime it loops.
+        print(f"Person ", counter)
+        print("Name: ",data["name"], "\nAge: ",data["age"]) # Prints data starting from the first
+    while True:
+        print("- - - - Exit Program Menu - - - -")
+        print("1 - Yes")
+        print("2 - No")
+        exit = int(input("Would you like to exit the program? "))
+        if exit == 1:
+            print("You have exited the program")
+            break
+        elif exit == 2:
+            menu()
+            break
+    
 
 menu()
