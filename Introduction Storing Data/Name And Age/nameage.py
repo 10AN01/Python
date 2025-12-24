@@ -29,20 +29,23 @@ def program():
             # Assigned a format. add the data inputted by user to the list.
         datainputted = {"name":name, "age":age,"gender":gender}
         userlist.append(datainputted)
-        print("Data has been inputted:")
+        print("Data has been put in the list")
         try:
+            #Read the folder. Categorises the old data inside "user". Adds old data to the userlist
             with open ("database.json", "r") as f:
                 old_data = json.load(f)
                 old_data = old_data["user"]
                 userlist.extend(old_data)
-                    
+            #Sets permissions to write. Dumps the userlist into the database.json   
             with open ("database.json", "w") as f:
                 json.dump({"user": userlist}, f, indent=4)          
                 break
+        #If file doesn't exist create a new json file with the category "user"
         except FileNotFoundError:
             with open ("database.json", "w") as f:
                 json.dump({"user": userlist}, f, indent=4)                   
                 break
+        print("Data has been stored in the folder.")
 def end():
     print("------------End Program Menu------------")
     print("1. Carry on")
