@@ -99,11 +99,18 @@ def remove():
         print(f"- - - - {counter} - - - -")
         print("Name:", animal["name"],"|Age:", animal["age"],"|Animal:", animal["animal"],"|Breed:", animal["breed"])
         print()
-    while True:
-        index_delete = int(input("Enter corrosponding number to data: "))
-        index_delete = index_delete - 1
-        print(animals[index_delete])
-        del animals[index_delete]
+      
+    index_delete = int(input("Enter corrosponding number to data: "))
+    #we do -1 as the first starts with 0
+    index_delete = index_delete - 1
+    #Shows what it's deleting
+    print(animals[index_delete])
+    del animals[index_delete]
+        #Replace the list currently with the one in the json
+    with open("databasefile.json", "w") as f:
+        json.dump({"Animal Data": animals}, f, indent=4)
+    menu()
+    
 
 def endprogram():
     print("Use Y(Yes) or N(No)")
@@ -113,7 +120,7 @@ def endprogram():
             print("Goodbye!")
             break
         elif end == "n" or end == "no":
-            program()
+            menu()
             break
         else:
             print("Invalid Option. Try Again.")
