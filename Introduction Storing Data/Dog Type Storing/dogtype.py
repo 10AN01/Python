@@ -2,11 +2,13 @@ import json
 
 datafile = []
 
+
 def menu():
     print("| MENU |")
     print("1.Add animal")
     print("2.Remove animal")
     print("3.View animals stored")
+    print("4.End Program")
     while True:
         choices = int(input("Enter a choice: "))
         if choices == 1:
@@ -18,28 +20,47 @@ def menu():
             view()
         elif choices == 4:
             endprogram()
+            break
     
 
 def program():
     while True:
         try:
-            loops = int(input("How many animals will you like to add?"))
+            loops = int(input("How many animals will you like to add? "))
             break
         except ValueError:
             print("Invalid Number. Try Again.")
+    counter = 0
     for i in range(loops):
-        counter = 0
         counter += 1
-        print(f"{counter} animal")
-        name = input("Enter animals name: ")
+        print(f"- - - - - - - - {counter} animal - - - - - - - -")
+        while True:
+            name = input("Enter animals name: ")
+            if name == "":
+                print("Enter a name.")
+            else:
+                print("")
+                break
         while True:
             try:
                 age = int(input(f"Enter {name}'s age:  "))
                 break
             except ValueError:
                 print("Invalid Number. Try again.")
-        animal = input("Enter what animal: ")
-        breed = input("Enter pet breed: ")
+        while True:
+            animal = input("Enter what animal: ")
+            if animal == "":
+                print("Enter a what animal")
+            else:
+                print("")
+                break
+        while True:
+            breed = input("Enter pet breed: ")
+            if breed == "":
+                print("Enter a breed.")
+            else:
+                print("")
+                break
         datainput = {"name":name, "age":age,"animal":animal, "breed":breed}
         datafile.append(datainput)
     try:
@@ -58,28 +79,40 @@ def program():
         with open ("databasefile.json", "w") as f:
             json.dump({"Animal Data":datafile},f , indent =4)
             print("Json file not found. Created json file.")
+    endprogram()
 def view():
     with open("databasefile.json", "r") as f:
         animals = json.load(f)["Animal Data"]
-
-    for animal in animals:
         counter = 0
+    for animal in animals:
         counter += 1
         print(f"- - - - {counter} - - - -")
-        print("Name:", animal["name"])
-        print("Age:", animal["age"])
-        print("Animal:", animal["animal"])
-        print("Breed:", animal["breed"])
+        print("Name:", animal["name"],"|Age:", animal["age"],"|Animal:", animal["animal"],"|Breed:", animal["breed"])
         print()
+
+def remove():
+    with open("databasefile.json", "r") as f:
+        animals = json.load(f)["Animal Data"]
+        counter = 0
+    for animal in animals:
+        counter += 1
+        print(f"- - - - {counter} - - - -")
+        print("Name:", animal["name"],"|Age:", animal["age"],"|Animal:", animal["animal"],"|Breed:", animal["breed"])
+        print()
+    while True:
+        index_delete = int(input("Enter corrosponding number to data: "))
+        index_delete = index_delete - 1
+        print(animals[index_delete])
+        del animals[index_delete]
 
 def endprogram():
     print("Use Y(Yes) or N(No)")
     while True:
-        end = input("End Program?  ")
-        if end.lower() == "Y" or  end.lower() == "yes":
+        end = input("End Program?  ").lower()
+        if end == "y" or end == "yes":
             print("Goodbye!")
             break
-        elif end.lower() == "N" or end.lower() == "no":
+        elif end == "n" or end == "no":
             program()
             break
         else:
