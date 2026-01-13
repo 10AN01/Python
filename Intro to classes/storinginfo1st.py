@@ -17,7 +17,7 @@ class Employee:
             f"Email: {self.email}"
         )
 
-employee_1 = Employee("Aiden","Neizer",6019758,24000)
+employee_1 = Employee("awdiden","Lizzer",6019758,24000)
 
 print(employee_1)
         

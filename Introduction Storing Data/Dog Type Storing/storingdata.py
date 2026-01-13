@@ -92,7 +92,7 @@ def remove():
         with open ("datafile.json", "r") as f:
             load = json.load(f)
             username = input("Who would you like to remove from the file? ")
-            if username = load[name]:
+            if username == load[name]:
                 load.remove(username)
     except ValueError:
         print ("No data found!")
