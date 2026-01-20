@@ -1,6 +1,5 @@
 import csv
 
-
 class AccountSystem():
 #Sets a list and checks if file exist.
     def __init__(self):
@@ -65,6 +64,7 @@ class AccountSystem():
     def remove_account(self):
         print("You have chosen to remove an account")
         counter = 0
+# Shows all accounts avalible
         for accounts in self.account_list:
             counter += 1
             print(f"- - - - - - Account {counter} - - - - - -")
@@ -72,13 +72,27 @@ class AccountSystem():
             print(f"Email: {accounts['Email']}")
             print(f"Password: {accounts['Password']}")
         while True:
+# Enter account name
             remove_account = input("Enter an account username that you'll like to remove: ")
-            if remove_account == accounts['Username']:
-                self.account_list.remove[remove_account]
-                print(f"Deleted: {remove_account}")
-                break
-            elif remove_account != accounts['Username']:
-                print(f"Invalid usernamed called: {remove_account}")
+# Checks through all data to see if there is username = input
+            for accounts in self.account_list:
+                if remove_account == accounts['Username']:
+# Removes from the list. Updates the file with the new list & dictonary
+                    self.account_list.remove(accounts)
+                    with open("useraccounts_database.csv","w",newline="") as f:
+                        writecsv = csv.DictWriter(f,fieldnames=["Username","Email","Password"])
+                        writecsv.writeheader()
+                        writecsv.writerows(self.account_list)
+                    print(f"Deleted: {remove_account}")
+                    from Main import menu
+                    menu()
+                    break
+                else:
+                    print(f"Invalid usernamed called: {remove_account}")
+                    from Main import menu
+                    menu()
+                    break
+            
         
 
 
