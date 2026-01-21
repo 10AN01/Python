@@ -10,6 +10,7 @@
 
 import csv
 from errorhandle import int_errorhandling,float_errorhandling,str_errorhandling,email_errorhandling
+from main import menu
 class BankingSystem:
     def __init__(self):
 #Sets the lists at the start of the code.
@@ -20,7 +21,8 @@ class BankingSystem:
                 readcsv = csv.DictReader(f)
                 self.account_list.extend(readcsv)
         except FileNotFoundError:
-            self.account_list = []
+            self.account_list = [] 
+# = = = = = = = ADD ACCOUNT  = = = = = = = 
     def add_account(self):
         balance = 0
 #Users inputs
@@ -74,13 +76,54 @@ class BankingSystem:
             writecsv = csv.DictWriter(f,fieldnames=fieldnames)
             writecsv.writeheader()
             writecsv.writerows(self.account_list)
+# = = = = = = = = REMOVE ACCOUNT = = = = = = = = 
     def remove_account(self):
+        from main import tryagain_remove
         print("You have chosen to remove an account.")
+        counter = 0
         for accounts in self.account_list:
-            print(self.account_list)
-        ask_firstname = input("What is the First Name of the acocunt:")
+            counter += 1
+            print(f"Account {counter}")
+            print(f"= = {accounts["Username"]} = =")
+            print(f"First Name: {accounts["First Name"]}")
+            print(f"Last Name: {accounts["Last Name"]}")
+            print(f"Email: {accounts["Email"]}")
+        while True:
+# Checks for first name in database
+            ask_firstname = input("First name of account: ")
+            for accounts in self.account_list:
+                if ask_firstname == accounts["First Name"]:
+                    break
+                else:
+                    print(f"Invalid user name {ask_firstname}")
+                    tryagain_remove()
+                    break
+# Checks for last name in database.
+            ask_secondname = input("Last name of account: ")
+            for accounts in self.account_list:
+                if ask_secondname == accounts["Last Name"]:
+                    break
+                else:
+                    print(f"Invalid user name {ask_secondname}")
+                    tryagain_remove()
+                    break
+# Checks if both names match
+            for acounts in self.account_list:
+                if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
+                    print("Valid Account in system")
+                    del accounts["First Name"]
+                    with open ("bankinginformation.csv","w",lines="") as f:
+                        fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
+                        writecsv = csv.DictWriter(f,fieldnames=fieldnames)
+                        writecsv.writeheader(f)
+                        writecsv.writerows
+                        break
+                else:
+                    print("Account first and last name doen't match.")
+                    tryagain_remove()
+                    break
             
-            
+                
 
 
 class BankInformation():
@@ -91,4 +134,5 @@ class BankInformation():
         self.password = password
         self.balance = balance
         self.transcation = []
-bankingsystem = BankingSystem()
+        
+        
