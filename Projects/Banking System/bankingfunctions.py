@@ -78,8 +78,10 @@ class BankingSystem:
             writecsv.writerows(self.account_list)
 # = = = = = = = = REMOVE ACCOUNT = = = = = = = = 
     def remove_account(self):
-        from main import tryagain_remove
         print("You have chosen to remove an account.")
+        if len(self.account_list) == 0:
+            print("No Accounts In Database.")
+            menu()
         counter = 0
         for accounts in self.account_list:
             counter += 1
@@ -96,8 +98,12 @@ class BankingSystem:
                     break
                 else:
                     print(f"Invalid user name {ask_firstname}")
-                    tryagain_remove()
-                    break
+                    retry = input("Try again? (y/n): ")
+                    if retry.lower() == "y":
+                        bankingsystem.remove_account()
+                        break
+                    elif retry.lower() == "n":
+                        menu()
 # Checks for last name in database.
             ask_secondname = input("Last name of account: ")
             for accounts in self.account_list:
@@ -105,7 +111,12 @@ class BankingSystem:
                     break
                 else:
                     print(f"Invalid user name {ask_secondname}")
-                    tryagain_remove()
+                    retry = input("Try again? (y/n): ")
+                    if retry.lower() == "y":
+                        bankingsystem.remove_account()
+                        break
+                    elif retry.lower() == "n":
+                        menu()
                     break
 # Checks if both names match
             for acounts in self.account_list:
@@ -120,8 +131,22 @@ class BankingSystem:
                         break
                 else:
                     print("Account first and last name doen't match.")
-                    tryagain_remove()
+                    retry = input("Try again? (y/n): ")
+                    if retry.lower() == "y":
+                        bankingsystem.remove_account()
+                        break
+                    elif retry.lower() == "n":
+                        menu()
                     break
+    def view_account(self):
+        for accounts in self.account_list:
+            print("=" *15)
+            print("ACCOUNT")
+            print(f"{"Username"}")
+            print("=" *15)
+            print(f"First Name: {"First Name"}")
+            print(f"Last Name: {"Last Name"}")
+            print(f"Email: {"Email"}")
             
                 
 
@@ -135,4 +160,4 @@ class BankInformation():
         self.balance = balance
         self.transcation = []
         
-        
+bankingsystem = BankingSystem()    
