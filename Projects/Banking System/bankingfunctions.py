@@ -1,10 +1,7 @@
-#Adding accounts (like a new bank account)
-#Viewing accounts
-#Delete accounts
-
-
- # - - - - Extra - - - -
- # Interact with different accounts
+# Adding accounts
+# Viewing accounts
+# Delete accounts 
+# Interact with different accounts
 # Depositing and withdrawing money
 # View transaction history
 
@@ -14,7 +11,7 @@ from main import menu
 class BankingSystem:
     def __init__(self):
 #Sets the lists at the start of the code.
-        self.account_list = []
+        self.account_list = [] 
         try:
 # Adds old data to the list
             with open("bankinginformation.csv","r") as f:
@@ -81,7 +78,7 @@ class BankingSystem:
         print("You have chosen to remove an account.")
         if len(self.account_list) == 0:
             print("No Accounts In Database.")
-            menu()
+            return
         counter = 0
         for accounts in self.account_list:
             counter += 1
@@ -103,7 +100,8 @@ class BankingSystem:
                         bankingsystem.remove_account()
                         break
                     elif retry.lower() == "n":
-                        menu()
+                        bankingsystem.menu()
+                        break
 # Checks for last name in database.
             ask_secondname = input("Last name of account: ")
             for accounts in self.account_list:
@@ -116,8 +114,8 @@ class BankingSystem:
                         bankingsystem.remove_account()
                         break
                     elif retry.lower() == "n":
-                        menu()
-                    break
+                        bankingsystem.menu()
+                        break
 # Checks if both names match
             for acounts in self.account_list:
                 if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
@@ -136,17 +134,20 @@ class BankingSystem:
                         bankingsystem.remove_account()
                         break
                     elif retry.lower() == "n":
-                        menu()
-                    break
+                        bankingsystem.menu()
+                        break
     def view_account(self):
         for accounts in self.account_list:
             print("=" *15)
             print("ACCOUNT")
-            print(f"{"Username"}")
-            print("=" *15)
-            print(f"First Name: {"First Name"}")
-            print(f"Last Name: {"Last Name"}")
-            print(f"Email: {"Email"}")
+            print(f"{accounts["Username"]}")
+            print("-" *15)
+            print(f"First Name: {accounts["First Name"]}")
+            print(f"Last Name: {accounts["Last Name"]}")
+            print(f"Email: {accounts["Email"]}")
+        return
+
+        
             
                 
 
@@ -159,5 +160,5 @@ class BankInformation():
         self.password = password
         self.balance = balance
         self.transcation = []
-        
-bankingsystem = BankingSystem()    
+
+bankingsystem = BankingSystem()
