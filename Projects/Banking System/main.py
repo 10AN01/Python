@@ -17,22 +17,16 @@ def menu():
         choice = int(input("Enter your choice: "))
         if choice == 1:
             bankingsystem.add_account()
-            break
         elif choice == 2:
             bankingsystem.view_account()
-            break
         elif choice == 3:
             bankingsystem.remove_account()
-            break
         elif choice == 4:
             print("Working")
-            break
         elif choice == 5:
             print("Working")
-            break
         elif choice == 6:
             print("Working")
-            break
         elif choice == 7:
             print("Bye!")
             break

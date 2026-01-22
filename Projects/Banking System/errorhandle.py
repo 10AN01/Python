@@ -29,6 +29,5 @@ def email_errorhandling(prompt):
         elif email_split[0] == "" or email_split[1] == "":
             print("Invalid Email")
         else:
-            print("Valid Email")
             return email
         

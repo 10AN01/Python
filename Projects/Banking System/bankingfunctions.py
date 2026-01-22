@@ -7,7 +7,6 @@
 
 import csv
 from errorhandle import int_errorhandling,float_errorhandling,str_errorhandling,email_errorhandling
-from main import menu
 class BankingSystem:
     def __init__(self):
 #Sets the lists at the start of the code.
@@ -90,52 +89,77 @@ class BankingSystem:
         while True:
 # Checks for first name in database
             ask_firstname = input("First name of account: ")
+            found_first = False
             for accounts in self.account_list:
                 if ask_firstname == accounts["First Name"]:
+                    found_first = True
                     break
-                else:
-                    print(f"Invalid user name {ask_firstname}")
-                    retry = input("Try again? (y/n): ")
-                    if retry.lower() == "y":
-                        bankingsystem.remove_account()
-                        break
-                    elif retry.lower() == "n":
-                        bankingsystem.menu()
-                        break
+            if found_first == False:
+                print(f"Invalid user name {ask_firstname}")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
 # Checks for last name in database.
             ask_secondname = input("Last name of account: ")
+            found_last = False
             for accounts in self.account_list:
                 if ask_secondname == accounts["Last Name"]:
+                    found_last = True
                     break
-                else:
-                    print(f"Invalid user name {ask_secondname}")
-                    retry = input("Try again? (y/n): ")
-                    if retry.lower() == "y":
-                        bankingsystem.remove_account()
-                        break
-                    elif retry.lower() == "n":
-                        bankingsystem.menu()
-                        break
+            if found_last == False:
+                print(f"Invalid last name {ask_secondname}")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
 # Checks if both names match
-            for acounts in self.account_list:
+            found_both_names = False
+            for accounts in self.account_list:
                 if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
                     print("Valid Account in system")
+                    found_both_names = True
+            
+            if found_both_names == True:
+# Only allowed 3 attempts
+                retry = 0
+                
+                while True:
+                    retry += 1
+                    print("You only have 3 tries.")
+                    print(f"You are on your {retry}/3 try")
+                    if retry > 3:
+                        return
+                    password_found = False
+                    password = input(f"Enter password for {ask_firstname} {ask_secondname}: ")
+                    
+                    if password == accounts["Password"]:
+                        password_found == True
+                        break
+                if password_found == True:
                     del accounts["First Name"]
-                    with open ("bankinginformation.csv","w",lines="") as f:
+                    with open ("bankinginformation.csv","w",newline="") as f:
                         fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
                         writecsv = csv.DictWriter(f,fieldnames=fieldnames)
                         writecsv.writeheader(f)
                         writecsv.writerows
-                        break
-                else:
-                    print("Account first and last name doen't match.")
-                    retry = input("Try again? (y/n): ")
-                    if retry.lower() == "y":
-                        bankingsystem.remove_account()
-                        break
-                    elif retry.lower() == "n":
-                        bankingsystem.menu()
-                        break
+                        return
+                if password_found == False:
+                    continue
+                        
+            if found_both_names == False:
+                print("Account first and last name doen't match.")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
+# Checks if they're the owner of account
     def view_account(self):
         for accounts in self.account_list:
             print("=" *15)
@@ -145,7 +169,6 @@ class BankingSystem:
             print(f"First Name: {accounts["First Name"]}")
             print(f"Last Name: {accounts["Last Name"]}")
             print(f"Email: {accounts["Email"]}")
-        return
 
         
             
