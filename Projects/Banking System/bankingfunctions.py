@@ -4,6 +4,7 @@
 # Interact with different accounts
 # Depositing and withdrawing money
 # View transaction history
+import json
 import csv
 from errorhandle import int_errorhandling,float_errorhandling,str_errorhandling,email_errorhandling
 class BankingSystem:
@@ -90,7 +91,7 @@ class BankingSystem:
             ask_firstname = input("First name of account: ")
             found_first = False
             for accounts in self.account_list:
-                if ask_firstname == accounts["First Name"]:
+                if ask_firstname.lower() == accounts["First Name"].lower():
                     found_first = True
                     break
             if found_first == False:
@@ -105,7 +106,7 @@ class BankingSystem:
             ask_secondname = input("Last name of account: ")
             found_last = False
             for accounts in self.account_list:
-                if ask_secondname == accounts["Last Name"]:
+                if ask_secondname.lower() == accounts["Last Name"].lower():
                     found_last = True
                     break
             if found_last == False:
@@ -119,7 +120,7 @@ class BankingSystem:
 # Checks if both names match
             found_both_names = False
             for accounts in self.account_list:
-                if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
+                if ask_firstname.lower() == accounts["First Name"].lower() and ask_secondname.lower() == accounts["Last Name"].lower():
                     print("Valid Account in system")
                     selected_account = accounts
                     found_both_names = True
@@ -187,7 +188,7 @@ class BankingSystem:
             ask_firstname = input("First name of account: ")
             found_first = False
             for accounts in self.account_list:
-                if ask_firstname == accounts["First Name"]:
+                if ask_firstname.lower() == accounts["First Name"].lower():
                     found_first = True
                     break
             if found_first == False:
@@ -202,7 +203,7 @@ class BankingSystem:
             ask_secondname = input("Last name of account: ")
             found_last = False
             for accounts in self.account_list:
-                if ask_secondname == accounts["Last Name"]:
+                if ask_secondname.lower() == accounts["Last Name"].lower():
                     found_last = True
                     break
             if found_last == False:
@@ -216,7 +217,7 @@ class BankingSystem:
 # Checks if both names match
             found_both_names = False
             for accounts in self.account_list:
-                if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
+                if ask_firstname.lower() == accounts["First Name"].lower() and ask_secondname.lower() == accounts["Last Name"].lower():
                     print("Valid Account in system")
                     selected_account = accounts
                     found_both_names = True
@@ -259,8 +260,8 @@ class BankingSystem:
                             if debt_choice.lower() == "y":
                                 new_withdraw_balance = float(selected_account["Account Balance"]) - withdraw_amount
                                 selected_account["Account Balance"] = new_withdraw_balance
-                                transaction_withdraw = f"{selected_account} withdrawed £{withdraw_amount} | New balance:{new_withdraw_balance}"
-                                selected_account["Transaction"].append(transaction_withdraw)
+                                transaction_withdraw = f"{selected_account["First Name"]} withdrawed £{withdraw_amount} | New balance:{new_withdraw_balance}"
+                                selected_account["Transaction"] = transaction_withdraw
                                 with open ("bankinginformation.csv","w",newline="") as f:
                                     fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
                                     writecsv = csv.DictWriter(f,fieldnames=fieldnames)
@@ -273,8 +274,8 @@ class BankingSystem:
                         elif account_menu_choice == 2:
                             deposit_amount = float_errorhandling("how much will you like to deposit? ")
                             new_deposit_balance = deposit_amount + float(selected_account["Account Balance"])
-                            transaction_deposit = f"{selected_account} deposited £{deposit_amount} \n New balance:{new_deposit_balance}"
-                            selected_account["Transaction"].extend(transaction_deposit)
+                            transaction_deposit = f"{selected_account["First Name"]} deposited £{deposit_amount} | New balance:{new_deposit_balance}"
+                            selected_account["Transaction"] = transaction_deposit
                             with open ("bankinginformation.csv","w",newline="") as f:
                                     fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
                                     writecsv = csv.DictWriter(f,fieldnames=fieldnames)
@@ -300,8 +301,88 @@ class BankingSystem:
                     break
                 elif retry.lower() == "n":
                     return
+    def view_last_transaction(self):
+        if len(self.account_list) == 0:
+            print("No Accounts In Database.")
+            return
+        counter = 0
+        for accounts in self.account_list:
+            counter += 1
+            print(f"Account {counter}")
+            print(f"= = {accounts["Username"]} = =")
+            print(f"First Name: {accounts["First Name"]}")
+            print(f"Last Name: {accounts["Last Name"]}")
+            print(f"Email: {accounts["Email"]}")
+        while True:
+# Checks for first name in database
+            ask_firstname = input("First name of account: ")
+            found_first = False
+            for accounts in self.account_list:
+                if ask_firstname.lower() == accounts["First Name"].lower():
+                    found_first = True
+                    break
+            if found_first == False:
+                print(f"Invalid user name {ask_firstname}")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
+# Checks for last name in database.
+            ask_secondname = input("Last name of account: ")
+            found_last = False
+            for accounts in self.account_list:
+                if ask_secondname.lower() == accounts["Last Name"].lower():
+                    found_last = True
+                    break
+            if found_last == False:
+                print(f"Invalid last name {ask_secondname}")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
+# Checks if both names match
+            found_both_names = False
+            for accounts in self.account_list:
+                if ask_firstname.lower() == accounts["First Name"].lower() and ask_secondname.lower() == accounts["Last Name"].lower():
+                    print("Valid Account in system")
+                    selected_account = accounts
+                    found_both_names = True
             
+            if found_both_names == True:
+# Only allowed 3 attempts
+                retry = 0
                 
+                password_found = False
+                while True:
+                    retry += 1
+                    print("You only have 3 tries.")
+                    print(f"You are on your {retry}/3 try")
+                    if retry > 3:
+                        return
+                    password = input(f"Enter password for {ask_firstname} {ask_secondname}: ")
+                    
+                    if password == selected_account["Password"]:
+                        password_found = True
+                        break
+                if password_found == True:
+########################################## START OF VIEW TRANSACTION ##############################################################
+                    print(f"Last transaction was: {selected_account["Transaction"]}")
+                    return
+                if password_found == False:
+                    continue
+                        
+            if found_both_names == False:
+                print("Account first and last name doen't match.")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return    
 
 
 class BankInformation():
