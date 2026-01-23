@@ -9,8 +9,7 @@ def menu():
         print("1. Add Banking Account")
         print("2. View Bank Accounts")
         print("3. Remove Banking Account (Required Login)")
-        print("4. Deposit (Required Login)")
-        print("5. Withdraw (Required Login)")
+        print("4. Deposit/Withdraw (Required Login)")
         print("6. View Transaction History (Required Login)")
         print("7. End Program")
         print("=" * 50)
@@ -22,10 +21,8 @@ def menu():
         elif choice == 3:
             bankingsystem.remove_account()
         elif choice == 4:
-            print("Working")
+            bankingsystem.deposit_withdraw_account()
         elif choice == 5:
-            print("Working")
-        elif choice == 6:
             print("Working")
         elif choice == 7:
             print("Bye!")

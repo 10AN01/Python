@@ -4,7 +4,6 @@
 # Interact with different accounts
 # Depositing and withdrawing money
 # View transaction history
-
 import csv
 from errorhandle import int_errorhandling,float_errorhandling,str_errorhandling,email_errorhandling
 class BankingSystem:
@@ -122,31 +121,32 @@ class BankingSystem:
             for accounts in self.account_list:
                 if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
                     print("Valid Account in system")
+                    selected_account = accounts
                     found_both_names = True
             
             if found_both_names == True:
 # Only allowed 3 attempts
                 retry = 0
                 
+                password_found = False
                 while True:
                     retry += 1
                     print("You only have 3 tries.")
                     print(f"You are on your {retry}/3 try")
                     if retry > 3:
                         return
-                    password_found = False
                     password = input(f"Enter password for {ask_firstname} {ask_secondname}: ")
                     
-                    if password == accounts["Password"]:
-                        password_found == True
+                    if password == selected_account["Password"]:
+                        password_found = True
                         break
                 if password_found == True:
-                    del accounts["First Name"]
+                    self.account_list.remove(selected_account)
                     with open ("bankinginformation.csv","w",newline="") as f:
                         fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
                         writecsv = csv.DictWriter(f,fieldnames=fieldnames)
-                        writecsv.writeheader(f)
-                        writecsv.writerows
+                        writecsv.writeheader()
+                        writecsv.writerows(self.account_list)
                         return
                 if password_found == False:
                     continue
@@ -170,7 +170,136 @@ class BankingSystem:
             print(f"Last Name: {accounts["Last Name"]}")
             print(f"Email: {accounts["Email"]}")
 
-        
+    def deposit_withdraw_account(self):
+        if len(self.account_list) == 0:
+            print("No Accounts In Database.")
+            return
+        counter = 0
+        for accounts in self.account_list:
+            counter += 1
+            print(f"Account {counter}")
+            print(f"= = {accounts["Username"]} = =")
+            print(f"First Name: {accounts["First Name"]}")
+            print(f"Last Name: {accounts["Last Name"]}")
+            print(f"Email: {accounts["Email"]}")
+        while True:
+# Checks for first name in database
+            ask_firstname = input("First name of account: ")
+            found_first = False
+            for accounts in self.account_list:
+                if ask_firstname == accounts["First Name"]:
+                    found_first = True
+                    break
+            if found_first == False:
+                print(f"Invalid user name {ask_firstname}")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
+# Checks for last name in database.
+            ask_secondname = input("Last name of account: ")
+            found_last = False
+            for accounts in self.account_list:
+                if ask_secondname == accounts["Last Name"]:
+                    found_last = True
+                    break
+            if found_last == False:
+                print(f"Invalid last name {ask_secondname}")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
+# Checks if both names match
+            found_both_names = False
+            for accounts in self.account_list:
+                if ask_firstname == accounts["First Name"] and ask_secondname == accounts["Last Name"]:
+                    print("Valid Account in system")
+                    selected_account = accounts
+                    found_both_names = True
+            
+            if found_both_names == True:
+# Only allowed 3 attempts
+                retry = 0
+                
+                password_found = False
+                while True:
+                    retry += 1
+                    print("You only have 3 tries.")
+                    print(f"You are on your {retry}/3 try")
+                    if retry > 3:
+                        return
+                    password = input(f"Enter password for {ask_firstname} {ask_secondname}: ")
+                    
+                    if password == selected_account["Password"]:
+                        password_found = True
+                        break
+                if password_found == True:
+########################################## START OF DEPOSIT/WITHDRAW ##############################################################
+                    print("=" * 30)
+                    print("           Account Menu")
+                    print("=" * 30)
+                    print("1) Withdraw")
+                    print("2) Deposit")
+                    print(f"Account Balance: {selected_account["Account Balance"]}")
+                    negative_balance = False
+                    while True:
+                        account_menu_choice = int(input("Enter from choice 1-2: "))
+                        if account_menu_choice == 1:
+                            withdraw_amount = float_errorhandling("how much will you like to withdraw? ")
+                            if withdraw_amount > float(selected_account["Account Balance"]):
+                                negative_balance = True
+                            else:
+                                negative_balance - False
+                        if negative_balance == True:
+                            debt_choice = input("Are you sure you want to be in debt? (y/n) ")
+                            if debt_choice.lower() == "y":
+                                new_withdraw_balance = float(selected_account["Account Balance"]) - withdraw_amount
+                                selected_account["Account Balance"] = new_withdraw_balance
+                                transaction_withdraw = f"{selected_account} withdrawed £{withdraw_amount} | New balance:{new_withdraw_balance}"
+                                selected_account["Transaction"].append(transaction_withdraw)
+                                with open ("bankinginformation.csv","w",newline="") as f:
+                                    fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
+                                    writecsv = csv.DictWriter(f,fieldnames=fieldnames)
+                                    writecsv.writeheader()
+                                    writecsv.writerows(self.account_list)
+                                    print(f"You have got a new balance of {new_withdraw_balance}")
+                                    return
+                            if debt_choice == False:
+                                break
+                        elif account_menu_choice == 2:
+                            deposit_amount = float_errorhandling("how much will you like to deposit? ")
+                            new_deposit_balance = deposit_amount + float(selected_account["Account Balance"])
+                            transaction_deposit = f"{selected_account} deposited £{deposit_amount} \n New balance:{new_deposit_balance}"
+                            selected_account["Transaction"].extend(transaction_deposit)
+                            with open ("bankinginformation.csv","w",newline="") as f:
+                                    fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
+                                    writecsv = csv.DictWriter(f,fieldnames=fieldnames)
+                                    writecsv.writeheader()
+                                    writecsv.writerows(self.account_list)
+                                    print(f"You have got a new balance of {new_deposit_balance}")
+                                    return
+                    
+                    with open ("bankinginformation.csv","w",newline="") as f:
+                        fieldnames = ["First Name","Last Name","Username","Email","Password","Account Balance","Transaction"]
+                        writecsv = csv.DictWriter(f,fieldnames=fieldnames)
+                        writecsv.writeheader()
+                        writecsv.writerows(self.account_list)
+                        return
+                if password_found == False:
+                    continue
+                        
+            if found_both_names == False:
+                print("Account first and last name doen't match.")
+                retry = input("Try again? (y/n): ")
+                if retry.lower() == "y":
+                    bankingsystem.remove_account()
+                    break
+                elif retry.lower() == "n":
+                    return
             
                 
 
