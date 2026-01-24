@@ -1,3 +1,0 @@
-This project is a console-based banking system built in Python that allows users to create and manage bank accounts. The system supports full interaction with accounts, including adding accounts, viewing accounts, depositing money, withdrawing money, and viewing transaction history.
-
-All account data is stored persistently using a CSV file, ensuring information is saved between program runs.
