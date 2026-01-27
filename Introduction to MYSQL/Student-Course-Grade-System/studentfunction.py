@@ -31,69 +31,52 @@
 
 
 import sqlite3
+import random
 from errorhandling import name_errorhandling,int_errorhandling
 class StudentSystem:
         def __init__(self, db_name = "students.db"):
             self.conn = sqlite3.connect(db_name)
             self.cursor = self.conn.cursor() # Runs SQL
             self.create_tables()
-            self.counter = 0
         def create_tables(self):
-            self.cursor.execute("""
-                                CREATE TABLE IF NOT EXISTS students (
-                                studentID TEXT PRIMARY KEY,
-                                firstname TEXT,
-                                lastname TEXT,
-                                email TEXT
-                                )
-                                """)
-            self.cursor.execute("""
-                                CREATE TABLE IF NOT EXISTS grades (
-                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                        studentID TEXT,
-                                        course TEXT,
-                                        grade TEXT
-                                )
-                                """)
-            self.conn.commit()
+                self.cursor.execute("""
+                                    CREATE TABLE IF NOT EXISTS student(
+                                            studentIdIncrement INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            studentID TEXT,
+                                            firstname TEXT,
+                                            lastname TEXT,
+                                            email TEXT
+                                    )
+                                    """)
+                self.cursor.execute ("""
+                                     CREATE TABLE IF NOT EXISTS grades(
+                                             studentIdIncrement INTEGER PRIMARY KEY AUTOINCREMENT,
+                                             studentID TEXT,
+                                             grades INTEGER,
+                                             subject TEXT
+                                     )
+                                     
+                                     """)
+                self.conn.commit()
         def add_student(self):
-                loops = int_errorhandling("How many students will you like to add? ")
+                print("="* 21)
+                print("     ADD STUDENT")
+                print("="* 21)
+                loops = int_errorhandling("Enter how many students you'll like to add: ")
                 for i in range(loops):
-                        self.counter += 1
                         firstname = name_errorhandling("Enter student's first name: ")
                         lastname = name_errorhandling("Enter student's last name: ")
-                        studentID = firstname[0].upper() + lastname[:2].upper() + str(self.counter)
+                        end_studentID = str(random.randint(1000,9999))
+                        studentID = firstname[0] + lastname[:2] + end_studentID
                         studentemail = studentID + "@ANSchool.com"
-                        datainputted = StudentInformation(firstname,lastname,studentID,studentemail)
+# Enters data just inputted into the columns
                         self.cursor.execute("""
-                                            INSERT INTO students (studentID, firstname,lastname,email)
-                                            VALUES (?,?,?,?)
+                                            INSERT INTO student (studentIdIncrement,studentID,firstname,lastname,email)
+                                            VALUES (NULL,?,?,?,?)
                                             """, (studentID,firstname,lastname,studentemail))
+# conn.commit makes the action permanentS
                         self.conn.commit()
-                        print(f"You have successfully added {firstname} {lastname}")
-        def remove_student():
-                print("")
-        
-        def view_students(self):
-                while True:
-                        print("= = = = = = VIEW STUDENT MENU = = = = = =")
-                        print("- - 1) View ALL students (WITHOUT GRADES) - -")
-                        print("- - 2) View ALL students (WITH GRADES) - -")
-                        print("- - 3) View specific student - -")
-                        print("= = = = = = = = = = = = = = = = =")
-                        view_choice = int_errorhandling("Enter from 1-2: ")
-                        if view_choice == 1:
-                                self.cursor.execute("SELECT * FROM students")
-                                all_students = self.cursor.fetchall()
-                                if not all_students:
-                                        print("No students found in database.")
-                                        return
-                                
-                                print("=== ALL STUDENTS ===")
-                                for student in all_students:
-                                        print(f"ID: {student[0]}, First Name: {student[1]}, Last Name: {student[2]}, Email: {student[3]}")
-                        elif view_choice == 2:
-                                print("")
+                        
 class StudentInformation:
         def __init__(self,firstname,lastname,studentID,studentemail):
                 self.firstname = firstname
@@ -102,5 +85,4 @@ class StudentInformation:
                 self.studentemail = studentemail
 
 studentsystem = StudentSystem()
-
-studentsystem.view_students()
+studentsystem.add_student()

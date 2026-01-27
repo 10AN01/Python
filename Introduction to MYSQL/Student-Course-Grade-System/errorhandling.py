@@ -11,12 +11,7 @@ def name_errorhandling(prompt):
 
 def int_errorhandling(prompt):
     while True:
-        value = input(prompt).strip()
-        if not value:
-            print("Must contain a number/")
-            continue
         try:
-            value = int(value)
-            return value
+            return int(input(prompt))
         except ValueError:
             print("Invalid Number")
