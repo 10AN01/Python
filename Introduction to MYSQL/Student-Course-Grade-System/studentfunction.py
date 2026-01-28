@@ -7,7 +7,7 @@
 # 3 options (Add student,remove student,View ALL student grades, View only one student grade)
 
 
-# - - - - - - - - Add Student Function - - - - - - - - 
+# - - - - - - - - Add Student Function - - - - - - - - (DONE)
 # User needs to input (FIRST NAME, LAST NAME,) to create a account
 #       User should not be able to enter numbers
 # Creates a student username automatically (First letter of last name, two letters of first name, plus a number that increases)
@@ -15,14 +15,14 @@
 # Stores all information into the students.db
 
 
-# - - - - - - - - Remove Student Function - - - - - - - -
+# - - - - - - - - Remove Student Function - - - - - - - - (DONE)
 # Shows all the students in the database
 # Input students first name
 #       Checks if it's in database
 # Remove student
 
 
-# - - - - - - - - View Student Function - - - - - - - -
+# - - - - - - - - View Student Function - - - - - - - - (DONE)
 # Show all students in the database
 # Input students first name
 #       Checks in database
@@ -89,6 +89,7 @@ class StudentSystem:
                         print("-"*24)
 # Will get only one data that is selected.
                 studentID_Remove = input("Enter the student ID to remove: ")
+                self.cursor.execute("""SELECT * FROM student WHERE studentID = ?""",(studentID_Remove,))
                 student = self.cursor.fetchone()
 # If the student ID is found then delete
                 if student is not None:
@@ -98,6 +99,14 @@ class StudentSystem:
                 else:
                         print("No student found with that ID")
                         return
+        def view_students(self):
+            self.cursor.execute("""
+                                SELECT * FROM student
+                                """)
+            all_students = self.cursor.fetchall()
+            for students in all_students:
+                print(f"Student ID:{students[1]}\nFirst Name:{students[2]}\nLast Name:{students[3]}\nEmail: {students[4]}")
+                print("-" * 25)
         def add_grades(self):
                 print("ADD GRADE")
 # Select everything in the database (Can see everything)
@@ -107,12 +116,14 @@ class StudentSystem:
                 for student in all_student:
                         print(f"Student ID: {student[1]}\nFirst Name: {student[2]}\nLast Name: {student[3]} \nEmail: {student[4]}")
                         print("-"*24)
+# Selects everything where the input is equaled
                 Student_ID = input("Enter the students ID: ")
                 self.cursor.execute("""
                                     SELECT * FROM student WHERE studentID = ?""",(Student_ID,)
                                     )
-                
+# Fetches that singular row
                 student = self.cursor.fetchone()
+# If the student is there carry on
                 if student is not None:
                         while True:
                                 grade = int_errorhandling("Enter the student's grade: ")
@@ -169,20 +180,48 @@ class StudentSystem:
                 else:
                         print("Student not found.")
                         return
+# Adds headers and then adds what goes under them (the data)
                 self.cursor.execute("""
                                     INSERT INTO grades (studentIdIncrement,studentID,grades,subject)
                                     VALUES (NULL,?,?,?)
                                     """, (Student_ID,grade,subject))
                 self.conn.commit()
-
-                        
-                        
-class StudentInformation:
-        def __init__(self,firstname,lastname,studentID,studentemail):
-                self.firstname = firstname
-                self.lastname = lastname
-                self.studentID = studentID
-                self.studentemail = studentemail
+                print("Successfully added grades to student.")
+        def view_all_grades(self):
+# Select all data to see the data
+                self.cursor.execute("""
+                                      SELECT * FROM grades
+                                      """)
+                all_student = self.cursor.fetchall()
+# If there is data it will print
+                if all_student is not None:
+                        for students in all_student:
+                            print(f"StudentID:{students[1]} | Subject:{students[3]} | Grade:{students[2]}")
+                        return
+                else:
+                        print("No grades in databse.")
+                        return
+        def view_specific_grades(self):
+# Select all data to see the data
+            self.cursor.execute("""
+                                SELECT * FROM student
+                                """)
+            all_students = self.cursor.fetchall()
+            for student in all_students:
+                print(f"Student ID: {student[1]}\nFirst Name: {student[2]}\nLast Name: {student[3]} \nEmail: {student[4]}")
+                print("-"*24)
+            Student_ID = input("Enter the students ID: ")
+            self.cursor.execute("""
+                                SELECT * FROM grades WHERE studentID = ?
+                                """,(Student_ID,))
+            one_student = self.cursor.fetchone()
+            if one_student is not None:
+                print(f"Student ID: {one_student[1]} | Subject:{one_student[3]} | Grade:{one_student[2]}")
+                return
+            else:
+                print("No Data in database.")
+                return
+                
+                
 
 studentsystem = StudentSystem()
-studentsystem.add_grades()
