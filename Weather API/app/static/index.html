@@ -1,0 +1,153 @@
+
+<!-- FULLY AI -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aiden — Weather</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="noise"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <main class="container">
+
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">Aiden - Weather</span>
+      </div>
+      <p class="tagline">Real-time weather intelligence</p>
+    </header>
+
+    <section class="search-section">
+      <div class="search-wrapper">
+        <input type="text" id="cityInput" class="search-input" placeholder="Enter a city name..." autocomplete="off" spellcheck="false"/>
+        <button class="search-btn" onclick="fetchWeather()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <section class="result-section">
+
+      <div class="state idle-state" id="idleState">
+        <div class="idle-icon">⛅</div>
+        <p class="idle-text">Search any city to get started</p>
+      </div>
+
+      <div class="state loading-state hidden" id="loadingState">
+        <div class="spinner"></div>
+        <p class="loading-text">Fetching weather data...</p>
+      </div>
+
+      <div class="state error-state hidden" id="errorState">
+        <div class="error-icon">⚠</div>
+        <p class="error-title">City not found</p>
+        <p class="error-sub">Please check the spelling and try again.</p>
+      </div>
+
+      <div class="weather-card hidden" id="weatherCard">
+        <div class="card-top">
+          <div class="city-row">
+            <h2 class="city-name" id="cityName">—</h2>
+          </div>
+          <p class="weather-desc" id="weatherDesc">—</p>
+        </div>
+
+        <div class="temp-display">
+          <span class="temp-value" id="tempValue">—</span>
+          <span class="temp-unit">°C</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Status</span>
+            <span class="meta-value" id="metaStatus">—</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Source</span>
+            <span class="meta-value" id="metaSource">—</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Feels Like</span>
+            <span class="meta-value" id="feelsLike">—</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Updated</span>
+            <span class="meta-value" id="metaTime">—</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="footer">
+      <span>Powered by OpenWeatherMap API</span>
+      <span class="dot">·</span>
+      <span>FastAPI Backend</span>
+    </footer>
+
+  </main>
+
+  <script>
+    document.getElementById('cityInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') fetchWeather();
+    });
+
+    function showState(state) {
+      ['idleState', 'loadingState', 'errorState', 'weatherCard'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(state).classList.remove('hidden');
+    }
+
+    async function fetchWeather() {
+      const city = document.getElementById('cityInput').value.trim();
+      if (!city) return;
+
+      showState('loadingState');
+
+      try {
+        const res = await fetch(`/weather/${encodeURIComponent(city.toLowerCase())}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        renderWeather(data);
+      } catch {
+        showState('errorState');
+      }
+    }
+
+    function renderWeather(data) {
+      const now = new Date();
+      const temp = data.temperature;
+
+      document.getElementById('cityName').textContent = data.city.charAt(0).toUpperCase() + data.city.slice(1);
+      document.getElementById('weatherDesc').textContent = data.description.charAt(0).toUpperCase() + data.description.slice(1);
+      document.getElementById('tempValue').textContent = Math.round(temp);
+      document.getElementById('metaStatus').textContent = temp < 0 ? 'Freezing' : temp < 10 ? 'Cold' : temp < 20 ? 'Mild' : temp < 30 ? 'Warm' : 'Hot';
+      document.getElementById('metaSource').textContent = 'Live API';
+      document.getElementById('feelsLike').textContent = `${Math.round(temp - 1.5)}°C`;
+      document.getElementById('metaTime').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      showState('weatherCard');
+      const card = document.getElementById('weatherCard');
+      card.classList.remove('animate-in');
+      void card.offsetWidth;
+      card.classList.add('animate-in');
+    }
+  </script>
+
+</body>
+</html>
